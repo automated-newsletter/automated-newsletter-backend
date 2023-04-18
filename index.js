@@ -4,9 +4,11 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-rl.question("What is you take input news ? ", function (news) {
-    console.log(`this is ${news}`);
-    rl.close();
+rl.question("Topic you want to search ? ", function (news) {
+    rl.question("Article you want to date: ? ", function (date) {
+        console.log(`${news}, is a from ${date}`);
+        rl.close();
+    });
 });
 
 rl.on("close", function () {
