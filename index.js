@@ -10,13 +10,12 @@ const rl = readline.createInterface({
 });
 
 rl.question("Topic you want to search ? ", function (news) {
-    rl.question("Article you want to date: ? ", async function (date) {
-        const formatDate = calulateDate(date);
-        console.log(`this is topic: ${news} and ${formatDate}`);
-        const newsData = await getNews(news, date, process.env.NEWS_API_KEY);
-        rl.close();
+    rl.question("Number of days you want articles from? ", async function (date) {
+        const { formattedDate, formattedTodayDate } = calulateDate(date);
+        const newsData = await getNews(news, formattedDate, formattedTodayDate, process.env.NEWS_API_KEY);
 
-        console.log("newsData", newsData.articles);
+        console.log("news", newsData.articles);
+        rl.close();
     });
 });
 
