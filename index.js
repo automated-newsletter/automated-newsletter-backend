@@ -1,4 +1,5 @@
 const readline = require("readline");
+const { calulateDate } = require("./utils/utils");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -6,7 +7,8 @@ const rl = readline.createInterface({
 
 rl.question("Topic you want to search ? ", function (news) {
     rl.question("Article you want to date: ? ", function (date) {
-        console.log(`${news}, is a from ${date}`);
+        const formatDate = calulateDate(date);
+        console.log(`this is topic: ${news} and ${formatDate}`);
         rl.close();
     });
 });
