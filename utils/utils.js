@@ -32,21 +32,9 @@ const filterUniqueNews = (newsArray, property) => {
     });
 };
 
-const pickRandomNews = (newsArray, noOfNews) => {
-    // Clone the original array to avoid modifying the original array
-    const clonedArray = newsArray.slice();
-
-    // Array to store picked random objects
-    const pickedObjects = [];
-
-    // Pick 'n' random objects
-    for (let i = 0; i < noOfNews && clonedArray.length > 0; i++) {
-        const randomIndex = Math.floor(Math.random() * clonedArray.length);
-        pickedObjects.push(clonedArray[randomIndex]);
-        clonedArray.splice(randomIndex, 1); // Remove the picked object from the cloned array
-    }
-
-    return pickedObjects;
+const pickFirstTenNews = (newsArray) => {
+    // Use the slice method to extract the first ten elements of the array
+    return newsArray.slice(0, 10); // Starting index is 0, ending index is 10 (exclusive)
 };
 
-module.exports = { calulateDate, filterUniqueNews, pickRandomNews };
+module.exports = { calulateDate, filterUniqueNews, pickFirstTenNews };
