@@ -25,10 +25,12 @@ rl.question("Topic you want to search ? ", function (news) {
         const { formattedDate, formattedTodayDate } = calulateDate(date);
         const newsData = await getNews(news, formattedDate, formattedTodayDate, process.env.NEWS_API_KEY);
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
-        const randomUniqueNews = pickFirstTenNews(uniqueNewsData);
+        const randomUniqueNews = pickFirstTenNews(uniqueNewsData, 5);
         const prompt = generateChatGPTPromptForNewsLetter(randomUniqueNews);
         const gptResponse = await generateContentWithGPT(prompt);
         const summary = gptResponse.choices[0].message.content;
+
+        console.log("news", randomUniqueNews);
 
         const imagePrompt = generateImagePrompt(summary);
         const imagePromptGPT = await generateContentWithGPT(imagePrompt);
@@ -54,7 +56,7 @@ rl.question("Topic you want to search ? ", function (news) {
             from: process.env.EMAIL_SENDER,
             subject: "Hello from NewsLetter test ",
             text: "Hello from send grid",
-            html: createTemplateHtml(),
+            html: createTemplateHtml(imageResponse.data[0].url, summary, randomUniqueNews, news),
         };
         const response = await sgMail.send(message);
         console.log("response", response);

@@ -32,9 +32,9 @@ const filterUniqueNews = (newsArray, property) => {
     });
 };
 
-const pickFirstTenNews = (newsArray) => {
+const pickFirstTenNews = (newsArray, noOfArticles) => {
     // Use the slice method to extract the first ten elements of the array
-    return newsArray.slice(0, 10); // Starting index is 0, ending index is 10 (exclusive)
+    return newsArray.slice(0, noOfArticles); // Starting index is 0, ending index is 10 (exclusive)
 };
 
 module.exports = { calulateDate, filterUniqueNews, pickFirstTenNews };

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* Reset some default styles for cross-browser consistency */
+        body,
+        img,
+        p,
+        table {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set font styles */
+        body {
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* Set max width for the template */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Style for header section */
+        .header {
+            display: flex;
+            flex-direction: row;
+            /* align-items: center; */
+            background-color: #f0f0f0;
+        }
+
+        .header img {
+            width: 280px;
+            margin-right: 20px;
+            max-width: 100%;
+            height: 200px;
+        }
+
+        .header h1 {
+            margin: auto;
+            width: 300px;
+            word-wrap: break-word;
+            margin-left: 20px;
+            color: black;
+        }
+
+        /* Style for short content section */
+        .short-content {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .short-content p {
+            margin-bottom: 20px;
+        }
+
+        /* Style for article list section */
+        .article-list {
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .article-list ul {
+            width: 100%;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .article-list li {
+            width: 100%;
+            display: flex;
+            /* align-items: center; */
+            margin-bottom: 10px;
+        }
+
+        .article-list li div {
+            width: 100%;
+        }
+
+        .article-list li h3 {
+            margin-bottom: 8px;
+        }
+
+        .article-list li p {
+            width: 80%;
+            word-wrap: break-word;
+        }
+
+        .article-list img {
+            margin-top: auto;
+            margin-bottom: auto;
+            /* margin-left: 20px; */
+            max-width: 160px;
+            height: 100px;
+            /* aspect-ratio: 3/2; */
+            object-fit: fill;
+            margin-right: 15px;
+        }
+
+        .article-list a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <img src="https://ci4.googleusercontent.com/proxy/EwL64ycCfhjdt9esVZ9XdtBIUJWqxls9Ew5M_Oe_QD1Ty7N5jW4Xje3KEJrykwIVaYDrt3vqfB83Md9JmcMAaQxrYixWKnQ7dvuQzyEL2wVZlZSYGSPPGADcrrrC3dxFpsykjB0qoDIFb2EY0xglBrJYETg6wQdPoL8vJHJb-4LD82piKjvjHzy3tAUCHJFeU2a_bWJluipWYQT6hYvGpQybN1FmEr8mMtbrPG4hNCWLL_lFkaPayHHeFcTkEvsxrM73iHyxWfJVVl20qMnBBAeI9O_bXwMD6vpy-zifG3_ZWozhbQ6ZWfhZCiFR2a1DeYFKxb0c6SED9S9zcDl3x-nBINQ7mOvW2XKw8lNxxgszIR5d8n0o5ZtSk8h-CtVOYA6Gm5uYEI8_Ggn4WiqB2H5dRf7ityMrTWMAAhlk1i9Ml65LcNpaxS2ZTQNJalNtizEe4LHMMq35J27zhlCY7wUkjiIBtPx_vRfV0GuiN4wvT-wEvgCc2eq3a7zRiwQ_7h3KWFIWDY1sCT2SxLD3wm7SJhc1rcnBPGliRlaDmZpKdQAFAU_Uh4FcHOdexOT3huvXnZVAdTfdevhfY_5_LzSmxG21KtAHdrJOcz6Qa6sVWwGHaOqG-75ej4MSoz8zpGsqkvNTTWJ5m0Y_=s0-d-e1-ft#https://oaidalleapiprodscus.blob.core.windows.net/private/org-EiznRVplky8ROzn33fqgtHDM/user-HkhXZ2W6gyLpCo1Ccc7fkOFl/img-INunjWd5JyshG4W5bl6rv5tt.png?st=2023-04-19T09%3A32%3A47Z&se=2023-04-19T11%3A32%3A47Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-04-19T08%3A53%3A19Z&ske=2023-04-20T08%3A53%3A19Z&sks=b&skv=2021-08-06&sig=X/fL2YPBR1FuyEPZcNjtGNUO0esD3bGaCDpFV3TyXUY%3D"
+                alt="Newsletter Header">
+            <h1>Top news related to cryptography this week</h1>
+        </div>
+
+        <!-- Short Content Section -->
+        <div class="short-content">
+            <p>This is a summary of some of the articles featured in this newsletter.</p>
+        </div>
+
+        <!-- Article List Section -->
+        <div class="article-list">
+            <h2>Featured Articles</h2>
+            <ul>
+                <li>
+                    <img src="https://i.guim.co.uk/img/media/44f4d0a44943793de94b9d70b5d8b506d7710a72/0_380_5339_3203/master/5339.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctbGl2ZS5wbmc&enable=upscale&s=8e8459a0d3ca680909b416e6282d19cc"
+                        alt="Article 1 Thumbnail">
+                    <div>
+                        <h3><a href="article1.html">Article 1 Title</a></h3>
+                        <p>This is a brief description of the content of Article
+                            1.asdaksjdkljaslkdjaklsdjkalsjdkalsjdklasjdklasjdkljaskldjaskldjakls Lorem, ipsum dolor sit
+                            amet consectetur adipisicing elit. Laborum pariatur quis est voluptatum aliquam. Natus autem
+                            quo illo non fugit, possimus cupiditate enim ipsa modi quaerat ea, maxime labore pariatur?
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <img src="https://i.guim.co.uk/img/media/44f4d0a44943793de94b9d70b5d8b506d7710a72/0_380_5339_3203/master/5339.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctbGl2ZS5wbmc&enable=upscale&s=8e8459a0d3ca680909b416e6282d19cc"
+                        alt="Article 2 Thumbnail">
+                    <div>
+                        <h3><a href="article2.html">Article 2 Title</a></h3>
+                        <p>This is a brief description of the content of Article 2. Lorem ipsum dolor, sit amet
+                            consectetur adipisicing elit. Possimus ducimus, aspernatur officia atque repellendus odit?
+                            Provident minus mollitia alias tempore sapiente sed esse totam, expedita ipsum. Expedita
+                            molestiae ipsa rem.</p>
+                    </div>
+                </li>
+                <li>
+                    <img src="https://i.guim.co.uk/img/media/44f4d0a44943793de94b9d70b5d8b506d7710a72/0_380_5339_3203/master/5339.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&overlay-align=bottom%2Cleft&overlay-width=100p&overlay-base64=L2ltZy9zdGF0aWMvb3ZlcmxheXMvdGctbGl2ZS5wbmc&enable=upscale&s=8e8459a0d3ca680909b416e6282d19cc"
+                        alt="Article 3 Thumbnail">
+                    <div>
+                        <h3><a href="article3.html">Article 3 Title</a></h3>
+                        <p>This is a brief description of the content of Article 3.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

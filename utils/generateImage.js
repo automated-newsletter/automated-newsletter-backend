@@ -15,7 +15,7 @@ const generateImage = async (imagePrompt) => {
         const imageResponse = await chatGptInstance.post("/images/generations", {
             prompt: imagePrompt,
             n: 1,
-            size: "256x256",
+            size: "512x512",
         });
         return imageResponse.data;
     } catch (error) {
