@@ -6,6 +6,7 @@
     "author": "Dechains",
     "license": "MIT",
     "dependencies": {
+        "@sendgrid/mail": "^7.7.0",
         "axios": "^1.3.5",
         "dotenv": "^16.0.3"
     }
