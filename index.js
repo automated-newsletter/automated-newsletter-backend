@@ -11,6 +11,7 @@ const {
 const { getNews } = require("./utils/getNews");
 const { calulateDate, filterUniqueNews, pickFirstTenNews } = require("./utils/utils");
 const { generateContentWithGPT } = require("./utils/generateContentWithGPT");
+const { generateImage, generateImagePrompt } = require("./utils/generateImage");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -24,11 +25,20 @@ rl.question("Topic you want to search ? ", function (news) {
         const randomUniqueNews = pickFirstTenNews(uniqueNewsData);
         const prompt = generateChatGPTPromptForNewsLetter(randomUniqueNews);
         const gptResponse = await generateContentWithGPT(prompt);
+        const summary = gptResponse.choices[0].message.content;
 
-        console.log("Summary\n\n", gptResponse.choices[0].message.content);
+        const imagePrompt = generateImagePrompt(summary);
+        const imagePromptGPT = await generateContentWithGPT(imagePrompt);
 
-        const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse.choices[0].message.content);
-        const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse.choices[0].message.content);
+        console.log("imagePrompt", imagePromptGPT.choices[0].message.content);
+
+        const imageResponse = await generateImage(imagePromptGPT.choices[0].message.content);
+
+        console.log("Summary\n\n", summary);
+        console.log("image", imageResponse.data[0].url);
+
+        const promptForLinkedIn = generateChatGPTPromptForLinkedIn(summary);
+        const promptForTwitter = generateChatGPTPromptForTwitter(summary);
 
         const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
         const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
