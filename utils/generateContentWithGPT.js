@@ -1,15 +1,15 @@
 const { chatGptInstance } = require("../config/apiConfig");
 
-const generateNewsSummary = async (gptPrompt) => {
+const generateContentWithGPT = async (gptPrompt) => {
     try {
-        const summary = await chatGptInstance.post(`/chat/completions`, {
+        const response = await chatGptInstance.post(`/chat/completions`, {
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: gptPrompt }],
         });
-        return summary.data;
+        return response.data;
     } catch (error) {
         console.error(error);
     }
 };
 
-module.exports = { generateNewsSummary };
+module.exports = { generateContentWithGPT };
