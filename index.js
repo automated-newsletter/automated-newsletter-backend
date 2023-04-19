@@ -5,6 +5,7 @@ const readline = require("readline");
 const { generateChatGPTPrompt } = require("./utils/generateChatGPTPrompt");
 const { getNews } = require("./utils/getNews");
 const { calulateDate, filterUniqueNews, pickFirstTenNews } = require("./utils/utils");
+const { generateNewsSummary } = require("./utils/getNewsSummary");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -17,8 +18,8 @@ rl.question("Topic you want to search ? ", function (news) {
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
         const randomUniqueNews = pickFirstTenNews(uniqueNewsData);
         const prompt = generateChatGPTPrompt(randomUniqueNews);
-
-        console.log("news", prompt);
+        const gptResponse = await generateNewsSummary(prompt);
+        console.log("gpt", gptResponse.choices[0].message.content);
         rl.close();
     });
 });
