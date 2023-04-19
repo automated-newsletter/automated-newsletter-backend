@@ -4,7 +4,6 @@ require("dotenv").config({
 const readline = require("readline");
 const {
     generateChatGPTPromptForNewsLetter,
-    generateChatGPTPromptForSocialMedia,
     generateChatGPTPromptForLinkedIn,
     generateChatGPTPromptForTwitter,
 } = require("./utils/generateChatGPTPrompt");
