@@ -49,10 +49,9 @@ rl.question("Topic you want to search ? ", function (news) {
         console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
         console.log("\n\nTwitter\n\n", gptResponseTwitter.choices[0].message.content);
 
-        postOnTwitter(gptResponseTwitter.choices[0].message.content);
-
         await sendMail("shairali@dechains.com", imageResponse.data[0].url, summary, randomUniqueNews, news);
 
+        await postOnTwitter(gptResponseTwitter.choices[0].message.content);
         rl.close();
     });
 });

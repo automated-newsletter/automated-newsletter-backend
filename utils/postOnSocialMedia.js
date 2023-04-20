@@ -1,28 +1,20 @@
-const Twit = require("twit");
+const { TwitterApi } = require("twitter-api-v2");
 
-const twitterApi = new Twit({
-    consumer_key: process.env.TWITTER_CONSUMER_KEY,
-    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-    access_token: process.env.ACCESS_TOKEN,
-    access_token_secret: process.env.ACCESS_TOKEN_SECRET,
-    bearer_token: process.env.BEARER_TOKEN,
+const client = new TwitterApi({
+    appKey: process.env.APP_KEY,
+    appSecret: process.env.APP_KEY_SECRET,
+    accessToken: process.env.ACCESS_TOKEN,
+    accessSecret: process.env.ACCESS_TOKEN_SECRET,
 });
 
-const postOnTwitter = (twitterSummary) => {
-    const tweet = {
-        status: twitterSummary,
-    };
+const twitterClient = client.readWrite;
 
+const postOnTwitter = async (twitterSummary) => {
     try {
-        twitterApi.post("tweets", tweet, (err, data, response) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log("Tweet posted successfully", data, response.statusCode);
-            }
-        });
-    } catch (error) {
-        console.log("error", error);
+        await twitterClient.v1.tweet(twitterSummary);
+        console.log("tweet successfully created");
+    } catch (e) {
+        console.error(e);
     }
 };
 

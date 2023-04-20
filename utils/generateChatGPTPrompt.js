@@ -57,11 +57,9 @@ const generateChatGPTPromptForTwitter = (summary) => {
     const basePrompt =
         generateBasePromptForSocialMedia("Twitter") +
         `
+    -Summary should not exceed 180 characters.
     
-    - It should have a minimum of 700 characters
-
     SUMMARY:
-
     `;
 
     const completePrompt = basePrompt + summary;
