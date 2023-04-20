@@ -2,7 +2,6 @@ require("dotenv").config({
     path: ".env",
 });
 const readline = require("readline");
-const sgMail = require("@sendgrid/mail");
 const {
     generateChatGPTPromptForNewsLetter,
     generateChatGPTPromptForLinkedIn,
@@ -12,14 +11,12 @@ const { getNews } = require("./utils/getNews");
 const { calulateDate, filterUniqueNews, pickFirstTenNews } = require("./utils/utils");
 const { generateContentWithGPT } = require("./utils/generateContentWithGPT");
 const { generateImage, generateImagePrompt } = require("./utils/generateImage");
-const { createTemplateHtml } = require("./utils/template");
 const { postOnTwitter } = require("./utils/postOnSocialMedia");
+const { sendMail } = require("./utils/sendMail");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
-
-sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
 
 rl.question("Topic you want to search ? ", function (news) {
     rl.question("Number of days you want articles from? ", async function (date) {
@@ -54,15 +51,7 @@ rl.question("Topic you want to search ? ", function (news) {
 
         postOnTwitter(gptResponseTwitter.choices[0].message.content);
 
-        const message = {
-            to: "nabeelahmed@dechains.com",
-            from: process.env.EMAIL_SENDER,
-            subject: "Hello from NewsLetter test ",
-            text: "Hello from send grid",
-            html: createTemplateHtml(imageResponse.data[0].url, summary, randomUniqueNews, news),
-        };
-        const response = await sgMail.send(message);
-        console.log("response", response);
+        await sendMail("shairali@dechains.com", imageResponse.data[0].url, summary, randomUniqueNews, news);
 
         rl.close();
     });
