@@ -13,6 +13,7 @@ const { calulateDate, filterUniqueNews, pickFirstTenNews } = require("./utils/ut
 const { generateContentWithGPT } = require("./utils/generateContentWithGPT");
 const { generateImage, generateImagePrompt } = require("./utils/generateImage");
 const { createTemplateHtml } = require("./utils/template");
+const { postOnTwitter } = require("./utils/postOnSocialMedia");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -50,6 +51,8 @@ rl.question("Topic you want to search ? ", function (news) {
 
         console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
         console.log("\n\nTwitter\n\n", gptResponseTwitter.choices[0].message.content);
+
+        postOnTwitter(gptResponseTwitter.choices[0].message.content);
 
         const message = {
             to: "nabeelahmed@dechains.com",
