@@ -5,12 +5,13 @@ dotenv.config({
 import { TwitterApi } from "twitter-api-v2";
 import { generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
 import { generateContentWithGPT } from "./generateContentWithGPT";
+import { ACCESS_TOKEN, ACCESS_TOKEN_SECRET, APP_KEY, APP_KEY_SECRET } from "../../config/config";
 
 const client = new TwitterApi({
-    appKey: process.env.APP_KEY!,
-    appSecret: process.env.APP_KEY_SECRET!,
-    accessToken: process.env.ACCESS_TOKEN!,
-    accessSecret: process.env.ACCESS_TOKEN_SECRET!,
+    appKey: APP_KEY,
+    appSecret: APP_KEY_SECRET,
+    accessToken: ACCESS_TOKEN,
+    accessSecret: ACCESS_TOKEN_SECRET,
 });
 
 const twitterClient = client.readWrite;
