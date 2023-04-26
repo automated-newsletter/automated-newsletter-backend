@@ -1,8 +1,9 @@
-interface Article {
+export interface Article {
     urlToImage: string;
     url: string;
     title: string;
     description: string;
+    [key: string]: string;
 }
 
 export const createTemplateHtml = (

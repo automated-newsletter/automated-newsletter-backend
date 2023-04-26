@@ -1,13 +1,10 @@
 import sgMail, { MailDataRequired } from "@sendgrid/mail";
 import { createTemplateHtml } from "../utils/template";
-import dotenv from "dotenv";
-dotenv.config({
-    path: ".env",
-});
+import { EMAIL_SENDER, SEND_GRID_API_KEY } from "../../config/index";
 
-sgMail.setApiKey(process.env.SEND_GRID_API_KEY!);
+sgMail.setApiKey(SEND_GRID_API_KEY);
 export const sendMail = async (
-    userMailAddress: string,
+    userMailAddress: string[],
     imageNewsUrl: string,
     summary: string,
     randomUniqueNews: any[],
@@ -16,7 +13,7 @@ export const sendMail = async (
     try {
         const message: MailDataRequired = {
             to: userMailAddress,
-            from: process.env.EMAIL_SENDER!,
+            from: EMAIL_SENDER,
             subject: "News Letter",
             text: "Hello from send grid",
             html: createTemplateHtml(imageNewsUrl, summary, randomUniqueNews, news),

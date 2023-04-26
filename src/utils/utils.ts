@@ -1,3 +1,5 @@
+import { Article } from "./template";
+
 export const calulateDate = (inputDays: number) => {
     const today = new Date();
 
@@ -19,7 +21,7 @@ export const calulateDate = (inputDays: number) => {
     return { formattedDate, formattedTodayDate };
 };
 
-export const filterUniqueNews = (newsArray: any[], property: string): any[] => {
+export const filterUniqueNews = (newsArray: Article[], property: string): any[] => {
     return newsArray.filter((obj, index, self) => {
         // Return true for the first occurrence of each value of the specified property
         return (
@@ -32,9 +34,7 @@ export const filterUniqueNews = (newsArray: any[], property: string): any[] => {
     });
 };
 
-export const pickFirstTenNews = (newsArray: any[], noOfArticles: number) => {
+export const pickFirstNNews = (newsArray: Article[], noOfArticles: number) => {
     // Use the slice method to extract the first ten elements of the array
     return newsArray.slice(0, noOfArticles); // Starting index is 0, ending index is 10 (exclusive)
 };
-
-// module.exports = { calulateDate, filterUniqueNews, pickFirstTenNews };
