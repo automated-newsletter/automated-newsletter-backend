@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
-import { NEWS_API_KEY } from "../../config/config";
-import { filterUniqueNews, pickFirstTenNews } from "../utils/utils";
+import { NEWS_API_KEY } from "../../config/index";
+import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
 import {
     // generateChatGPTPromptForLinkedIn,
     generateChatGPTPromptForNewsLetter,
@@ -14,49 +14,46 @@ import { postOnTwitter } from "../utils/postOnSocialMedia";
 
 interface NewsPost {
     news: string;
-    email: string[];
+    emails: string[];
     from: string;
     to: string;
 }
 
 export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Response) => {
     try {
-        const { news, email, to, from } = req.body;
+        const { news, emails, to, from } = req.body;
         const newsData = await getNews(news, from, to, NEWS_API_KEY);
         console.log("news", newsData);
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
-        console.log("randomUniqueNews", uniqueNewsData);
-        const randomUniqueNews = pickFirstTenNews(uniqueNewsData, 5);
-        console.log("randomUniqueNews", randomUniqueNews);
-        const prompt = generateChatGPTPromptForNewsLetter(randomUniqueNews);
+        console.log("uniqueNews", uniqueNewsData);
+        const uniqueNews = pickFirstNNews(uniqueNewsData, 5);
+        console.log("uniqueNews", uniqueNews);
+        const prompt = generateChatGPTPromptForNewsLetter(uniqueNews);
         console.log("prompt", prompt);
         const gptResponse = await generateContentWithGPT(prompt);
         console.log("gptResponse", gptResponse);
-        const summary = gptResponse.choices[0].message.content;
+        console.log("news", uniqueNews);
 
-        console.log("news", randomUniqueNews);
-
-        const imagePrompt = generateImagePrompt(summary);
+        const imagePrompt = generateImagePrompt(gptResponse);
         const imagePromptGPT = await generateContentWithGPT(imagePrompt);
+        console.log("imagePrompt", imagePromptGPT);
 
-        console.log("imagePrompt", imagePromptGPT.choices[0].message.content);
+        const imageResponse = await generateImage(imagePromptGPT);
 
-        const imageResponse = await generateImage(imagePromptGPT.choices[0].message.content);
+        console.log("Summary\n\n", gptResponse);
+        console.log("image", imageResponse);
 
-        console.log("Summary\n\n", summary);
-        console.log("image", imageResponse.data[0].url, imageResponse);
-
-        // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(summary);
-        const promptForTwitter = generateChatGPTPromptForTwitter(summary);
+        // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
+        const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
 
         // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
         const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
 
         // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
-        console.log("\n\nTwitter\n\n", gptResponseTwitter.choices[0].message.content);
+        console.log("\n\nTwitter\n\n", gptResponseTwitter);
 
-        await sendMail(email, imageResponse.data[0].url, summary, randomUniqueNews, news);
-        await postOnTwitter(gptResponseTwitter.choices[0].message.content);
+        await sendMail(emails, imageResponse, gptResponse, uniqueNews, news);
+        await postOnTwitter(gptResponseTwitter);
         return res.status(200).json({
             success: true,
             message: "News Letter sent succesfully ",

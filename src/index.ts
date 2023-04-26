@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import http from "http";
-import { PORT } from "../config/config";
+import { PORT } from "../config";
 import { newAutomatedLetter } from "./controller";
 
 const app = express();
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // Logging requests to console.
 app.use(morgan("dev"));
 
-app.use("/api/news-automated-letter", newAutomatedLetter);
+app.use("/api", newAutomatedLetter);
 
 server.listen(PORT, () => {
     console.log(`🔥 [server]: server is running at http://localhost:${PORT}`);

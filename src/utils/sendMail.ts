@@ -1,6 +1,6 @@
 import sgMail, { MailDataRequired } from "@sendgrid/mail";
 import { createTemplateHtml } from "../utils/template";
-import { SEND_GRID_API_KEY } from "../../config/config";
+import { EMAIL_SENDER, SEND_GRID_API_KEY } from "../../config/index";
 
 sgMail.setApiKey(SEND_GRID_API_KEY);
 export const sendMail = async (
@@ -13,7 +13,7 @@ export const sendMail = async (
     try {
         const message: MailDataRequired = {
             to: userMailAddress,
-            from: process.env.EMAIL_SENDER!,
+            from: EMAIL_SENDER,
             subject: "News Letter",
             text: "Hello from send grid",
             html: createTemplateHtml(imageNewsUrl, summary, randomUniqueNews, news),

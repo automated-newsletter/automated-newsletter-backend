@@ -5,7 +5,7 @@ dotenv.config({
 import { TwitterApi } from "twitter-api-v2";
 import { generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
 import { generateContentWithGPT } from "./generateContentWithGPT";
-import { ACCESS_TOKEN, ACCESS_TOKEN_SECRET, APP_KEY, APP_KEY_SECRET } from "../../config/config";
+import { ACCESS_TOKEN, APP_KEY, ACCESS_TOKEN_SECRET, APP_KEY_SECRET } from "../../config/index";
 
 const client = new TwitterApi({
     appKey: APP_KEY,
@@ -22,7 +22,7 @@ export const postOnTwitter = async (twitterSummary: string) => {
         if (twitterSummary.length > 270) {
             const prompt = generateTwitterPromptForSummarizing(twitterSummary);
             const summarizedPost = await generateContentWithGPT(prompt);
-            await postOnTwitter(summarizedPost.choices[0].message.content);
+            await postOnTwitter(summarizedPost);
             console.log("generating summary again...", prompt);
             return;
         }

@@ -1,4 +1,4 @@
-import { chatGptInstance } from "./../../config/apiConfig";
+import { chatGptInstance } from "./../../config/api";
 
 export const generateImagePrompt = (summary: string) => {
     const basePrompt = `
@@ -17,7 +17,7 @@ export const generateImage = async (imagePrompt: string) => {
             n: 1,
             size: "512x512",
         });
-        return imageResponse.data;
+        return imageResponse.data.data[0].url;
     } catch (error) {
         console.log(error);
     }

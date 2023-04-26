@@ -3,6 +3,7 @@ export interface Article {
     url: string;
     title: string;
     description: string;
+    [key: string]: string;
 }
 
 export const createTemplateHtml = (

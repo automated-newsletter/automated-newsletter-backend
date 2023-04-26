@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GPT_API_KEY } from "./config";
+import { GPT_API_KEY } from ".";
 
 export const newsApiInstance = axios.create({
     baseURL: "https://newsapi.org/v2",

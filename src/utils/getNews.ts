@@ -1,4 +1,4 @@
-import { newsApiInstance } from "./../../config/apiConfig";
+import { newsApiInstance } from "./../../config/api";
 
 export const getNews = async (category: string, fromDate: string, toDate: string, apiKey: string) => {
     try {
