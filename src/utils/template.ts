@@ -1,4 +1,4 @@
-interface Article {
+export interface Article {
     urlToImage: string;
     url: string;
     title: string;
