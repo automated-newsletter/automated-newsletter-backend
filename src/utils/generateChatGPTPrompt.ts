@@ -1,4 +1,4 @@
-const generateChatGPTPromptForNewsLetter = (newsArray) => {
+export const generateChatGPTPromptForNewsLetter = (newsArray: any) => {
     const basePrompt = `
     Below are the short description of some of the articles. I want you to create a combined summary of all of them. Follow the instruction given below to generate summary:
 
@@ -25,7 +25,7 @@ const generateChatGPTPromptForNewsLetter = (newsArray) => {
     return completePrompt;
 };
 
-const generateBasePromptForSocialMedia = (platform) => {
+export const generateBasePromptForSocialMedia = (platform: string) => {
     return `
         You are a master in creating posts for ${platform}.
         Below is the combined summary of multiple articles.
@@ -39,7 +39,7 @@ const generateBasePromptForSocialMedia = (platform) => {
     `;
 };
 
-const generateChatGPTPromptForLinkedIn = (summary) => {
+export const generateChatGPTPromptForLinkedIn = (summary: string) => {
     const basePrompt =
         generateBasePromptForSocialMedia("LinkedIn") +
         ` 
@@ -53,7 +53,7 @@ const generateChatGPTPromptForLinkedIn = (summary) => {
     return completePrompt;
 };
 
-const generateChatGPTPromptForTwitter = (summary) => {
+export const generateChatGPTPromptForTwitter = (summary: string) => {
     const basePrompt =
         `Your response should not exceed 250 characters including white spaces, please note that it is my primary requirement, do not neglect this` +
         generateBasePromptForSocialMedia("Twitter") +
@@ -69,7 +69,7 @@ const generateChatGPTPromptForTwitter = (summary) => {
     return completePrompt;
 };
 
-const generateTwitterPromptForSummarizing = (twitterSummary) => {
+export const generateTwitterPromptForSummarizing = (twitterSummary: string) => {
     const basePrompt = `
         A twitter post is given below, I want you to summarize it into less than 180 characters. Make sure to keep the tone as if it was a twitter post.
         Also make sure to follow the below instructions too:
@@ -79,11 +79,4 @@ const generateTwitterPromptForSummarizing = (twitterSummary) => {
     `;
 
     return basePrompt + twitterSummary;
-};
-
-module.exports = {
-    generateChatGPTPromptForNewsLetter,
-    generateTwitterPromptForSummarizing,
-    generateChatGPTPromptForLinkedIn,
-    generateChatGPTPromptForTwitter,
 };

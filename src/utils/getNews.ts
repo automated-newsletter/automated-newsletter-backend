@@ -1,6 +1,6 @@
-const { newsApiInstance } = require("../config/apiConfig");
+import { newsApiInstance } from "./../../config/apiConfig";
 
-const getNews = async (category, fromDate, toDate, apiKey) => {
+export const getNews = async (category: string, fromDate: string, toDate: string, apiKey: string) => {
     try {
         const queryParams = `q=${category}&from=${fromDate}&to=${toDate}&sortBy=relevancy&apiKey=${apiKey}&language=en&excludeDomains=biztoc.com`;
 
@@ -11,5 +11,3 @@ const getNews = async (category, fromDate, toDate, apiKey) => {
         console.error(error);
     }
 };
-
-module.exports = { getNews };
