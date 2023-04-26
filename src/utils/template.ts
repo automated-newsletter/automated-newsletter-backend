@@ -1,4 +1,16 @@
-const createTemplateHtml = (thumbnailImage, summary, articles, keyword) => {
+interface Article {
+    urlToImage: string;
+    url: string;
+    title: string;
+    description: string;
+}
+
+export const createTemplateHtml = (
+    thumbnailImage: string,
+    summary: string,
+    articles: Article[],
+    keyword: string
+): string => {
     const template = `<!DOCTYPE html>
 <html>
 
@@ -155,5 +167,3 @@ const createTemplateHtml = (thumbnailImage, summary, articles, keyword) => {
 </html>`;
     return template;
 };
-
-module.exports = { createTemplateHtml };

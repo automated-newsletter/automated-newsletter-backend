@@ -1,17 +1,21 @@
-const { TwitterApi } = require("twitter-api-v2");
-const { generateTwitterPromptForSummarizing } = require("./generateChatGPTPrompt");
-const { generateContentWithGPT } = require("./generateContentWithGPT");
+import dotenv from "dotenv";
+dotenv.config({
+    path: ".env",
+});
+import { TwitterApi } from "twitter-api-v2";
+import { generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
+import { generateContentWithGPT } from "./generateContentWithGPT";
 
 const client = new TwitterApi({
-    appKey: process.env.APP_KEY,
-    appSecret: process.env.APP_KEY_SECRET,
-    accessToken: process.env.ACCESS_TOKEN,
-    accessSecret: process.env.ACCESS_TOKEN_SECRET,
+    appKey: process.env.APP_KEY!,
+    appSecret: process.env.APP_KEY_SECRET!,
+    accessToken: process.env.ACCESS_TOKEN!,
+    accessSecret: process.env.ACCESS_TOKEN_SECRET!,
 });
 
 const twitterClient = client.readWrite;
 
-const postOnTwitter = async (twitterSummary) => {
+export const postOnTwitter = async (twitterSummary: string) => {
     try {
         console.log("twitter len", twitterSummary.length);
         if (twitterSummary.length > 270) {
@@ -27,5 +31,3 @@ const postOnTwitter = async (twitterSummary) => {
         console.error(e);
     }
 };
-
-module.exports = { postOnTwitter };

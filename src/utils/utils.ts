@@ -1,4 +1,4 @@
-const calulateDate = (inputDays) => {
+export const calulateDate = (inputDays: number) => {
     const today = new Date();
 
     const todayYear = today.getFullYear();
@@ -19,12 +19,12 @@ const calulateDate = (inputDays) => {
     return { formattedDate, formattedTodayDate };
 };
 
-const filterUniqueNews = (newsArray, property) => {
-    return newsArray.filter(function (obj, index, self) {
+export const filterUniqueNews = (newsArray: any[], property: string): any[] => {
+    return newsArray.filter((obj, index, self) => {
         // Return true for the first occurrence of each value of the specified property
         return (
             self
-                .map(function (innerObj) {
+                .map((innerObj) => {
                     return innerObj[property];
                 })
                 .indexOf(obj[property]) === index
@@ -32,9 +32,9 @@ const filterUniqueNews = (newsArray, property) => {
     });
 };
 
-const pickFirstTenNews = (newsArray, noOfArticles) => {
+export const pickFirstTenNews = (newsArray: any[], noOfArticles: number) => {
     // Use the slice method to extract the first ten elements of the array
     return newsArray.slice(0, noOfArticles); // Starting index is 0, ending index is 10 (exclusive)
 };
 
-module.exports = { calulateDate, filterUniqueNews, pickFirstTenNews };
+// module.exports = { calulateDate, filterUniqueNews, pickFirstTenNews };

@@ -1,6 +1,6 @@
-const { chatGptInstance } = require("../config/apiConfig");
+import { chatGptInstance } from "./../../config/apiConfig";
 
-const generateImagePrompt = (summary) => {
+export const generateImagePrompt = (summary: string) => {
     const basePrompt = `
     You are a master in creating prompts for generative AI image tool DALL-E.
 Read the summary given below and generate a creative and short prompt for generative AI image tool DALL-E, also add the type of image in the prompt for example: "futuristic", "robotic", "sci-fi", "realistic" and so on. Don't include any details about people or person:
@@ -10,7 +10,7 @@ Read the summary given below and generate a creative and short prompt for genera
     return basePrompt + summary;
 };
 
-const generateImage = async (imagePrompt) => {
+export const generateImage = async (imagePrompt: string) => {
     try {
         const imageResponse = await chatGptInstance.post("/images/generations", {
             prompt: imagePrompt,
@@ -22,5 +22,3 @@ const generateImage = async (imagePrompt) => {
         console.log(error);
     }
 };
-
-module.exports = { generateImage, generateImagePrompt };
