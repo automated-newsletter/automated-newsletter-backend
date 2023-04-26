@@ -55,9 +55,11 @@ const generateChatGPTPromptForLinkedIn = (summary) => {
 
 const generateChatGPTPromptForTwitter = (summary) => {
     const basePrompt =
+        `Your response should not exceed 250 characters including white spaces, please note that it is my primary requirement, do not neglect this` +
         generateBasePromptForSocialMedia("Twitter") +
         `
-    -Summary should not exceed 180 characters.
+        -Make sure to keep the tone as if it was a twitter post.
+    -Summary should not exceed 250 characters.
     
     SUMMARY:
     `;
@@ -67,8 +69,21 @@ const generateChatGPTPromptForTwitter = (summary) => {
     return completePrompt;
 };
 
+const generateTwitterPromptForSummarizing = (twitterSummary) => {
+    const basePrompt = `
+        A twitter post is given below, I want you to summarize it into less than 180 characters. Make sure to keep the tone as if it was a twitter post.
+        Also make sure to follow the below instructions too:
+
+        - At the end of each post, but before hashtags Write something to tell the user to checkout our newsletter for complete details.
+        - Don't create bullet points. Only create a single paragraph.
+    `;
+
+    return basePrompt + twitterSummary;
+};
+
 module.exports = {
     generateChatGPTPromptForNewsLetter,
+    generateTwitterPromptForSummarizing,
     generateChatGPTPromptForLinkedIn,
     generateChatGPTPromptForTwitter,
 };

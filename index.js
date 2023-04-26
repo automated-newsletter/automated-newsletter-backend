@@ -38,7 +38,7 @@ rl.question("Topic you want to search ? ", function (news) {
         const imageResponse = await generateImage(imagePromptGPT.choices[0].message.content);
 
         console.log("Summary\n\n", summary);
-        console.log("image", imageResponse.data[0].url);
+        console.log("image", imageResponse.data[0].url, imageResponse);
 
         const promptForLinkedIn = generateChatGPTPromptForLinkedIn(summary);
         const promptForTwitter = generateChatGPTPromptForTwitter(summary);
@@ -50,7 +50,6 @@ rl.question("Topic you want to search ? ", function (news) {
         console.log("\n\nTwitter\n\n", gptResponseTwitter.choices[0].message.content);
 
         await sendMail("shairali@dechains.com", imageResponse.data[0].url, summary, randomUniqueNews, news);
-
         await postOnTwitter(gptResponseTwitter.choices[0].message.content);
         rl.close();
     });
