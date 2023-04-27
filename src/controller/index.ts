@@ -20,13 +20,20 @@ interface NewsPost {
     emails: string[];
     from: string;
     to: string;
-    twitterAccessToken?: string;
-    twitterAccessSecret?: string;
+    postToTwitter: boolean;
+    oauth_token?: string;
+    oauth_verifier?: string;
 }
+
+const twitterClient = new Twitter({
+    consumer_key: APP_KEY,
+    consumer_secret: APP_KEY_SECRET,
+    version: "1.1",
+});
 
 export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Response) => {
     try {
-        const { news, emails, to, from, twitterAccessToken, twitterAccessSecret } = req.body;
+        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter } = req.body;
         const newsData = await getNews(news, from, to, NEWS_API_KEY);
         console.log("news", newsData);
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
@@ -48,27 +55,32 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         console.log("Summary\n\n", gptResponse);
         console.log("image", imageResponse);
 
-        // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
-        const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
-
-        // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
-        const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
-
-        // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
-        console.log("\n\nTwitter\n\n", gptResponseTwitter);
-
         await sendMail(emails, imageResponse, gptResponse, uniqueNews, news);
+        if (postToTwitter && !!oauth_token && !!oauth_verifier) {
+            // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
+            const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
 
-        // Use the user's access tokens to post a tweet on their behalf
-        const userClient = new Twitter({
-            consumer_key: APP_KEY,
-            consumer_secret: APP_KEY_SECRET,
-            access_token_key: twitterAccessToken,
-            access_token_secret: twitterAccessSecret,
-            version: "1.1",
-        });
-        const tweetText = gptResponseTwitter;
-        await userClient.post("statuses/update", { status: tweetText });
+            // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
+            const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
+
+            // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
+            console.log("\n\nTwitter\n\n", gptResponseTwitter);
+            const { oauth_token: accessToken, oauth_token_secret: accessSecret } = await twitterClient.getAccessToken({
+                oauth_verifier,
+                oauth_token,
+            });
+
+            // Use the user's access tokens to post a tweet on their behalf
+            const userClient = new Twitter({
+                consumer_key: APP_KEY,
+                consumer_secret: APP_KEY_SECRET,
+                access_token_key: accessToken,
+                access_token_secret: accessSecret,
+                version: "1.1",
+            });
+            const tweetText = gptResponseTwitter;
+            await userClient.post("statuses/update", { status: tweetText });
+        }
         return res.status(200).json({
             success: true,
             message: "News Letter sent succesfully ",
@@ -82,12 +94,6 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         });
     }
 };
-
-const twitterClient = new Twitter({
-    consumer_key: APP_KEY,
-    consumer_secret: APP_KEY_SECRET,
-    version: "1.1",
-});
 
 export const callBackTwitter = async (req: Request<{}, {}>, res: Response) => {
     try {
