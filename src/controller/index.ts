@@ -3,7 +3,6 @@ import { getNews } from "../utils/getNews";
 import { NEWS_API_KEY } from "../../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
 import {
-    // generateChatGPTPromptForLinkedIn,
     generateChatGPTPromptForNewsLetter,
     generateChatGPTPromptForTwitter,
 } from "../utils/generateChatGPTPrompt";
