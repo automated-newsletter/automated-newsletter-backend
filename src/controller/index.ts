@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
-import { APP_KEY, APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../../config/index";
+import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
 import {
     // generateChatGPTPromptForLinkedIn,
@@ -10,7 +10,7 @@ import {
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";
 import { generateImage, generateImagePrompt } from "../utils/generateImage";
 import { sendMail } from "../utils/sendMail";
-import { postOnTwitter } from "../utils/postOnSocialMedia";
+// import { postOnTwitter } from "../utils/postOnSocialMedia";
 import { URL } from "url";
 import Twitter from "twitter-lite";
 import { app } from "../index";
@@ -26,8 +26,8 @@ interface NewsPost {
 }
 
 const twitterClient = new Twitter({
-    consumer_key: APP_KEY,
-    consumer_secret: APP_KEY_SECRET,
+    consumer_key: TWITTER_APP_KEY,
+    consumer_secret: TWITTER_APP_KEY_SECRET,
     version: "1.1",
 });
 
@@ -72,8 +72,8 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
 
             // Use the user's access tokens to post a tweet on their behalf
             const userClient = new Twitter({
-                consumer_key: APP_KEY,
-                consumer_secret: APP_KEY_SECRET,
+                consumer_key: TWITTER_APP_KEY,
+                consumer_secret: TWITTER_APP_KEY_SECRET,
                 access_token_key: accessToken,
                 access_token_secret: accessSecret,
                 version: "1.1",
