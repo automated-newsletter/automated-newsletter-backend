@@ -4,9 +4,11 @@ import morgan from "morgan";
 import http from "http";
 import { PORT } from "../config";
 import { newAutomatedLetter, authorizeTwitter, callBackTwitter } from "./controller";
+import { SocketServer } from "./socket/socket";
 
 const app = express();
 const server = http.createServer(app);
+export const socketServer = new SocketServer(server);
 
 app.use(cors());
 app.use(express.json());

@@ -2,16 +2,14 @@ import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
 import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
-import {
-    generateChatGPTPromptForNewsLetter,
-    generateChatGPTPromptForTwitter,
-} from "../utils/generateChatGPTPrompt";
+import { generateChatGPTPromptForNewsLetter, generateChatGPTPromptForTwitter } from "../utils/generateChatGPTPrompt";
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";
 import { generateImage, generateImagePrompt } from "../utils/generateImage";
 import { sendMail } from "../utils/sendMail";
 // import { postOnTwitter } from "../utils/postOnSocialMedia";
 import { URL } from "url";
 import Twitter from "twitter-lite";
+import { socketServer } from "..";
 
 interface NewsPost {
     news: string;
@@ -19,6 +17,7 @@ interface NewsPost {
     from: string;
     to: string;
     postToTwitter: boolean;
+    socketId: string;
     oauth_token?: string;
     oauth_verifier?: string;
 }
@@ -31,7 +30,12 @@ const twitterClient = new Twitter({
 
 export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Response) => {
     try {
-        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter } = req.body;
+        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter, socketId } = req.body;
+        res.status(200).json({
+            success: true,
+            socketId,
+            message: "Your request has been initiated...",
+        });
         const newsData = await getNews(news, from, to, NEWS_API_KEY);
         console.log("news", newsData);
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
@@ -79,9 +83,9 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             const tweetText = gptResponseTwitter;
             await userClient.post("statuses/update", { status: tweetText });
         }
-        return res.status(200).json({
+        socketServer.automatedNewsLetterResponse(socketId, {
             success: true,
-            message: "News Letter sent succesfully ",
+            message: "NewsLetter successfully sent...",
         });
     } catch (error) {
         console.log("Error showing", error);

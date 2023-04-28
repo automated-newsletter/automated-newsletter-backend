@@ -19,6 +19,7 @@
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
         "morgan": "^1.10.0",
+        "socket.io": "^4.6.1",
         "twit": "^2.2.11",
         "twitter-api-v2": "^1.14.2",
         "twitter-lite": "^1.1.0"
