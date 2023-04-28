@@ -32,4 +32,14 @@ export class SocketServer {
     ) {
         this.io.to(socketId).emit(SocketEventTypes.AUTOMATTED_NEWSLETTER_RESPONSE, responsePayload);
     }
+
+    public automatedNewsLetterFailure(
+        socketId: string,
+        responsePayload: {
+            success: boolean;
+            message: string;
+        }
+    ) {
+        this.io.to(socketId).emit(SocketEventTypes.AUTOMATTED_NEWSLETTER_RESPONSE, responsePayload);
+    }
 }

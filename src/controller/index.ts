@@ -81,18 +81,19 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 version: "1.1",
             });
             const tweetText = gptResponseTwitter;
-            await userClient.post("statuses/update", { status: tweetText });
+            const twiiterUser = await userClient.post("statuses/update", { status: tweetText });
+            console.log("twitterUser", twiiterUser);
         }
         socketServer.automatedNewsLetterResponse(socketId, {
             success: true,
             message: "NewsLetter successfully sent...",
         });
     } catch (error) {
+        const { socketId } = req.body;
         console.log("Error showing", error);
-        return res.status(500).json({
+        socketServer.automatedNewsLetterFailure(socketId, {
             success: false,
-            message: "Error on automated news letter",
-            error: error,
+            message: "Failed to send newsletter",
         });
     }
 };
