@@ -5,7 +5,7 @@ import http from "http";
 import { PORT } from "../config";
 import { newAutomatedLetter, authorizeTwitter, callBackTwitter } from "./controller";
 
-export const app = express();
+const app = express();
 const server = http.createServer(app);
 
 app.use(cors());

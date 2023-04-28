@@ -27,7 +27,7 @@ export const generateChatGPTPromptForNewsLetter = (newsArray: any) => {
 
 export const generateBasePromptForSocialMedia = (platform: string) => {
     return `
-        You are a master in creating posts for ${platform}.
+        You are a master in creating short posts for ${platform} by summarizing the content provided to you.
         Below is the combined summary of multiple articles.
         I want you to create ${platform} post for sharing it on ${platform}.
 
@@ -55,14 +55,14 @@ export const generateChatGPTPromptForLinkedIn = (summary: string) => {
 
 export const generateChatGPTPromptForTwitter = (summary: string) => {
     const basePrompt =
-        `Your response should not exceed 250 characters including white spaces, please note that it is my primary requirement, do not neglect this` +
-        generateBasePromptForSocialMedia("Twitter") +
+        `You have a detailed summary that's over 2500 characters, but you want to share the essence of it on Twitter. 
+        Craft a tweet that's no longer than 250 characters and includes relevant hashtags and a call to action. 
+        Your tweet should entice readers to subscribe to your newsletter for more information. Remember to keep it concise and compelling!` +
         `
-        -Make sure to keep the tone as if it was a twitter post.
-    -Summary should not exceed 250 characters.
-    
-    SUMMARY:
-    `;
+        Here's a detailed summary for you:
+
+        
+        `;
 
     const completePrompt = basePrompt + summary;
 

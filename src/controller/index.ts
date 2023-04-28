@@ -13,7 +13,6 @@ import { sendMail } from "../utils/sendMail";
 // import { postOnTwitter } from "../utils/postOnSocialMedia";
 import { URL } from "url";
 import Twitter from "twitter-lite";
-import { app } from "../index";
 
 interface NewsPost {
     news: string;
@@ -97,11 +96,11 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
 
 export const callBackTwitter = async (req: Request<{}, {}>, res: Response) => {
     try {
-        const oauth_token = req.query.oauth_token as string;
-        const oauth_verifier = req.query.oauth_verifier as string;
+        const oauthToken = req.query.oauth_token as string;
+        const oauthVerifier = req.query.oauth_verifier as string;
         const { oauth_token: accessToken, oauth_token_secret: accessSecret } = await twitterClient.getAccessToken({
-            oauth_verifier,
-            oauth_token,
+            oauth_verifier: oauthVerifier,
+            oauth_token: oauthToken,
         });
         res.status(200).json({
             accessToken,
@@ -115,18 +114,16 @@ export const callBackTwitter = async (req: Request<{}, {}>, res: Response) => {
 
 export const authorizeTwitter = async (req: Request<{}, {}>, res: Response) => {
     try {
-        let oauth_token = "",
-            oauth_token_secret;
+        let oauthToken = "",
+            oauthTokenSecret;
         const twitterToken = await twitterClient.getRequestToken("http://192.168.0.205:3000/twitter-auth");
         if (twitterToken.oauth_callback_confirmed === "true") {
-            oauth_token = twitterToken.oauth_token;
-            oauth_token_secret = twitterToken.oauth_token_secret;
+            oauthToken = twitterToken.oauth_token;
+            oauthTokenSecret = twitterToken.oauth_token_secret;
         }
         // Save the request token secret to compare later
-        // In a real application, you would want to store this securely and associate it with the user
-        app.locals.requestTokenSecret = oauth_token_secret;
         const authURL = new URL("https://api.twitter.com/oauth/authenticate");
-        authURL.searchParams.append("oauth_token", oauth_token);
+        authURL.searchParams.append("oauth_token", oauthToken);
         // res.send(`<a href="${authURL.toString()}">Click here to authorize the app</a>`);
         res.status(200).json({ authURL: authURL.toString() });
     } catch (error) {
