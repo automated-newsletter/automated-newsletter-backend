@@ -27,6 +27,7 @@ export class SocketServer {
         socketId: string,
         responsePayload: {
             success: boolean;
+            twitterUrl: string;
             message: string;
         }
     ) {

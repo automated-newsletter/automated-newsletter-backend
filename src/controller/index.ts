@@ -58,6 +58,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         console.log("image", imageResponse);
 
         await sendMail(emails, imageResponse, gptResponse, uniqueNews, news);
+        let twitterUrl: string = "";
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
             const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
@@ -81,11 +82,12 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 version: "1.1",
             });
             const tweetText = gptResponseTwitter;
-            const twiiterUser = await userClient.post("statuses/update", { status: tweetText });
-            console.log("twitterUser", twiiterUser);
+            const twitterUser = await userClient.post("statuses/update", { status: tweetText });
+            twitterUrl = `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`;
         }
         socketServer.automatedNewsLetterResponse(socketId, {
             success: true,
+            twitterUrl,
             message: "NewsLetter successfully sent...",
         });
     } catch (error) {
