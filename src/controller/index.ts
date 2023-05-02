@@ -57,7 +57,9 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         console.log("Summary\n\n", gptResponse);
         console.log("image", imageResponse);
 
-        await sendMail(emails, imageResponse, gptResponse, uniqueNews, news);
+        const newsStringModifier = news.replaceAll(" OR", ",");
+
+        await sendMail(emails, imageResponse, gptResponse, uniqueNews, newsStringModifier);
         let twitterUrl: string = "";
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
