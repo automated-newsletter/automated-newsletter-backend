@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-import { ResponseStatus, SocketEventTypes } from "./type";
+import { ResponseStatus, SocialMediaSupport, SocketEventTypes } from "./type";
 
 export class SocketServer {
     private io: Server;
@@ -27,7 +27,7 @@ export class SocketServer {
         socketId: string,
         responsePayload: {
             status: ResponseStatus;
-            twitterUrl: string;
+            socialMediaUrls: SocialMediaSupport[];
             message: string;
         }
     ) {

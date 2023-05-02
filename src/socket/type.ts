@@ -10,3 +10,13 @@ export enum ResponseStatus {
     SUCCESS = "success",
     FAILED = "failed",
 }
+
+export enum SupportedPlatforms {
+    TWITTER = "Twitter",
+    LINKEDIN = "Linkedin",
+}
+
+export interface SocialMediaSupport {
+    platform: string;
+    url: string;
+}

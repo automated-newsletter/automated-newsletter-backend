@@ -6,11 +6,10 @@ import { generateChatGPTPromptForNewsLetter, generateChatGPTPromptForTwitter } f
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";
 import { generateImage, generateImagePrompt } from "../utils/generateImage";
 import { sendMail } from "../utils/sendMail";
-// import { postOnTwitter } from "../utils/postOnSocialMedia";
 import { URL } from "url";
 import Twitter from "twitter-lite";
 import { socketServer } from "..";
-import { ResponseStatus } from "../socket/type";
+import { ResponseStatus, SupportedPlatforms, SocialMediaSupport } from "../socket/type";
 
 export interface NewsPost {
     news: string;
@@ -61,7 +60,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         const newsStringModifier = news.replaceAll(" OR", ",");
 
         await sendMail(emails, imageResponse, gptResponse, uniqueNews, newsStringModifier);
-        let twitterUrl: string = "";
+        let socialMediaUrls: SocialMediaSupport[] = [];
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
             const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
@@ -89,12 +88,14 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             const tweetText = gptResponseTwitter;
             const twitterUser = await userClient.post("statuses/update", { status: tweetText });
             console.log("twitterUser", twitterUser);
-
-            twitterUrl = `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`;
+            socialMediaUrls.push({
+                platform: SupportedPlatforms.TWITTER,
+                url: `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`,
+            });
         }
         socketServer.automatedNewsLetterResponse(socketId, {
             status: ResponseStatus.SUCCESS,
-            twitterUrl,
+            socialMediaUrls,
             message: "NewsLetter successfully sent...",
         });
     } catch (error) {
