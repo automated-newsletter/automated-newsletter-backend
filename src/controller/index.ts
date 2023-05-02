@@ -12,7 +12,7 @@ import Twitter from "twitter-lite";
 import { socketServer } from "..";
 import { ResponseStatus } from "../socket/type";
 
-interface NewsPost {
+export interface NewsPost {
     news: string;
     emails: string[];
     from: string;
