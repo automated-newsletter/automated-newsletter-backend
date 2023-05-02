@@ -66,6 +66,8 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
             const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
 
+            console.log("prompt for twitter", promptForTwitter);
+
             // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
             const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
 
@@ -86,6 +88,8 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             });
             const tweetText = gptResponseTwitter;
             const twitterUser = await userClient.post("statuses/update", { status: tweetText });
+            console.log("twitterUser", twitterUser);
+
             twitterUrl = `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`;
         }
         socketServer.automatedNewsLetterResponse(socketId, {

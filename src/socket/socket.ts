@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
-import { SocketEventTypes } from "./type";
+import { ResponseStatus, SocketEventTypes } from "./type";
 
 export class SocketServer {
     private io: Server;
@@ -26,7 +26,7 @@ export class SocketServer {
     public automatedNewsLetterResponse(
         socketId: string,
         responsePayload: {
-            success: boolean;
+            status: ResponseStatus;
             twitterUrl: string;
             message: string;
         }
@@ -37,7 +37,7 @@ export class SocketServer {
     public automatedNewsLetterFailure(
         socketId: string,
         responsePayload: {
-            success: boolean;
+            status: ResponseStatus;
             message: string;
         }
     ) {
