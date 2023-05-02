@@ -31,7 +31,7 @@ export class SocketServer {
             message: string;
         }
     ) {
-        this.io.to(socketId).emit(SocketEventTypes.AUTOMATTED_NEWSLETTER_RESPONSE, responsePayload);
+        this.io.to(socketId).emit(SocketEventTypes.NEWSLETTER_RESPONSE_SENT, responsePayload);
     }
 
     public automatedNewsLetterFailure(
@@ -41,6 +41,6 @@ export class SocketServer {
             message: string;
         }
     ) {
-        this.io.to(socketId).emit(SocketEventTypes.AUTOMATTED_NEWSLETTER_RESPONSE, responsePayload);
+        this.io.to(socketId).emit(SocketEventTypes.NEWSLETTER_RESPONSE_FAILED, responsePayload);
     }
 }

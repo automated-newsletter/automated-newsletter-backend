@@ -10,6 +10,7 @@ import { sendMail } from "../utils/sendMail";
 import { URL } from "url";
 import Twitter from "twitter-lite";
 import { socketServer } from "..";
+import { ResponseStatus } from "../socket/type";
 
 interface NewsPost {
     news: string;
@@ -32,7 +33,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
     try {
         const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter, socketId } = req.body;
         res.status(200).json({
-            success: true,
+            status: ResponseStatus.PENDING,
             socketId,
             message: "Your request has been initiated...",
         });
@@ -88,7 +89,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             twitterUrl = `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`;
         }
         socketServer.automatedNewsLetterResponse(socketId, {
-            success: true,
+            status: ResponseStatus.SUCCESS,
             twitterUrl,
             message: "NewsLetter successfully sent...",
         });
@@ -96,7 +97,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         const { socketId } = req.body;
         console.log("Error showing", error);
         socketServer.automatedNewsLetterFailure(socketId, {
-            success: false,
+            status: ResponseStatus.FAILED,
             message: "Failed to send newsletter",
         });
     }

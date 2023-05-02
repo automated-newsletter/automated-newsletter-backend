@@ -1,6 +1,6 @@
 export enum SocketEventTypes {
     CONNECT = "connect",
     DISCONNECT = "disconnect",
-    AUTOMATTED_NEWSLETTER_RESPONSE = "automated:newsletter:response",
-    AUTOMATED_NEWLETTET_FAILURE = "automated:newsletter:failure",
+    NEWSLETTER_RESPONSE_SENT = "newsletter:response:sent",
+    NEWSLETTER_RESPONSE_FAILED = "newsletter:response:failed",
 }
