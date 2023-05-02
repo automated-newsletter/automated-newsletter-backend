@@ -35,7 +35,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         res.status(200).json({
             status: ResponseStatus.PENDING,
             socketId,
-            message: "Your request has been initiated...",
+            message: "Your request has been initiated, You will be informed once your request is completed...",
         });
         const newsData = await getNews(news, from, to, NEWS_API_KEY);
         console.log("news", newsData);
