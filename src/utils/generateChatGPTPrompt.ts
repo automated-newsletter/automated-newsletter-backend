@@ -56,7 +56,7 @@ export const generateChatGPTPromptForLinkedIn = (summary: string) => {
 export const generateChatGPTPromptForTwitter = (summary: string) => {
     const basePrompt =
         `You have a detailed summary that's over 2500 characters, but you want to share the essence of it on Twitter. 
-        Craft a tweet that's no longer than 250 characters and includes relevant hashtags and a call to action. 
+        Create a tweet that's no longer than 250 characters and includes relevant hashtags and a call to action. 
         Your tweet should entice readers to subscribe to your newsletter for more information. Remember to keep it concise and compelling!` +
         `
         Here's a detailed summary for you:

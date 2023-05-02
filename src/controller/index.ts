@@ -2,23 +2,23 @@ import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
 import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
-import {
-    generateChatGPTPromptForNewsLetter,
-    generateChatGPTPromptForTwitter,
-} from "../utils/generateChatGPTPrompt";
+import { generateChatGPTPromptForNewsLetter, generateChatGPTPromptForTwitter } from "../utils/generateChatGPTPrompt";
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";
 import { generateImage, generateImagePrompt } from "../utils/generateImage";
 import { sendMail } from "../utils/sendMail";
 // import { postOnTwitter } from "../utils/postOnSocialMedia";
 import { URL } from "url";
 import Twitter from "twitter-lite";
+import { socketServer } from "..";
+import { ResponseStatus } from "../socket/type";
 
-interface NewsPost {
+export interface NewsPost {
     news: string;
     emails: string[];
     from: string;
     to: string;
     postToTwitter: boolean;
+    socketId: string;
     oauth_token?: string;
     oauth_verifier?: string;
 }
@@ -31,7 +31,12 @@ const twitterClient = new Twitter({
 
 export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Response) => {
     try {
-        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter } = req.body;
+        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter, socketId } = req.body;
+        res.status(200).json({
+            status: ResponseStatus.PENDING,
+            socketId,
+            message: "Your request has been initiated, You will be informed once your request is completed...",
+        });
         const newsData = await getNews(news, from, to, NEWS_API_KEY);
         console.log("news", newsData);
         const uniqueNewsData = filterUniqueNews(newsData.articles, "title");
@@ -53,10 +58,15 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         console.log("Summary\n\n", gptResponse);
         console.log("image", imageResponse);
 
-        await sendMail(emails, imageResponse, gptResponse, uniqueNews, news);
+        const newsStringModifier = news.replaceAll(" OR", ",");
+
+        await sendMail(emails, imageResponse, gptResponse, uniqueNews, newsStringModifier);
+        let twitterUrl: string = "";
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
             const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
+
+            console.log("prompt for twitter", promptForTwitter);
 
             // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
             const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
@@ -77,18 +87,22 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 version: "1.1",
             });
             const tweetText = gptResponseTwitter;
-            await userClient.post("statuses/update", { status: tweetText });
+            const twitterUser = await userClient.post("statuses/update", { status: tweetText });
+            console.log("twitterUser", twitterUser);
+
+            twitterUrl = `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`;
         }
-        return res.status(200).json({
-            success: true,
-            message: "News Letter sent succesfully ",
+        socketServer.automatedNewsLetterResponse(socketId, {
+            status: ResponseStatus.SUCCESS,
+            twitterUrl,
+            message: "NewsLetter successfully sent...",
         });
     } catch (error) {
+        const { socketId } = req.body;
         console.log("Error showing", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error on automated news letter",
-            error: error,
+        socketServer.automatedNewsLetterFailure(socketId, {
+            status: ResponseStatus.FAILED,
+            message: "Failed to send newsletter",
         });
     }
 };

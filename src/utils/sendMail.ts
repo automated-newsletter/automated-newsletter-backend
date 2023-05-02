@@ -8,7 +8,7 @@ export const sendMail = async (
     imageNewsUrl: string,
     summary: string,
     randomUniqueNews: any[],
-    news: string
+    newsStringModifier: string
 ) => {
     try {
         const message: MailDataRequired = {
@@ -16,7 +16,7 @@ export const sendMail = async (
             from: EMAIL_SENDER,
             subject: "News Letter",
             text: "Hello from send grid",
-            html: createTemplateHtml(imageNewsUrl, summary, randomUniqueNews, news),
+            html: createTemplateHtml(imageNewsUrl, summary, randomUniqueNews, newsStringModifier),
         };
         const response = await sgMail.send(message);
         console.log("response", response);
