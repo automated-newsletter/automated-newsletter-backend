@@ -7,7 +7,9 @@ export const newsLetterValidator = Joi.object<NewsPost>({
     from: Joi.string().required(),
     to: Joi.string().required(),
     postToTwitter: Joi.boolean().required(),
+    postToLinkedIn: Joi.boolean().required(),
     socketId: Joi.string().required(),
+    linkedInAuthCode: Joi.string().optional(),
     oauth_token: Joi.string().optional(),
     oauth_verifier: Joi.string().optional(),
 });

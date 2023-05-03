@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import http from "http";
 import { PORT } from "./config";
-import { newAutomatedLetter, authorizeTwitter, callBackTwitter } from "./controller";
+import { newAutomatedLetter, authorizeTwitter, callBackTwitter, authorizeLinkedin } from "./controller";
 import { SocketServer } from "./socket/socket";
 import { validateRequest } from "./middleware/validateRequest";
 import { newsLetterValidator } from "./validator/newsletter.validator";
@@ -21,6 +21,7 @@ app.use(morgan("dev"));
 
 app.use("/api", validateRequest(newsLetterValidator), newAutomatedLetter);
 app.get("/callback", callBackTwitter);
+app.get("/authorize-linkedin", authorizeLinkedin);
 app.get("/authorize", authorizeTwitter);
 
 server.listen(PORT, () => {
