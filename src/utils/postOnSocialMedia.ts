@@ -5,11 +5,11 @@ dotenv.config({
     path: ".env",
 });
 
-export const regenerateTwitterSummary = async (summary: string, limit: number = 5) => {
+export const regenerateTwitterSummary = async (summary: string) => {
     try {
         if (summary.length > 250) {
             let gptResponseTwitter: string = "";
-            for (let i = 0; i < limit; i++) {
+            for (let i = 0; i < Number(process.env.TWITTER_RETRY_LIMIT); i++) {
                 console.log("generating", i + 1);
                 const newPrompt = generateTwitterPromptForSummarizing(summary);
                 gptResponseTwitter = await generateContentWithGPT(newPrompt);
