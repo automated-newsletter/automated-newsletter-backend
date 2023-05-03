@@ -8,3 +8,4 @@ export const TWITTER_APP_KEY = process.env.TWITTER_APP_KEY!;
 export const TWITTER_APP_KEY_SECRET = process.env.TWITTER_APP_KEY_SECRET!;
 export const GPT_API_KEY = process.env.GPT_API_KEY!;
 export const EMAIL_SENDER = process.env.EMAIL_SENDER!;
+export const TWITTER_RETRY_LIMIT = process.env.TWITTER_RETRY_LIMIT!;

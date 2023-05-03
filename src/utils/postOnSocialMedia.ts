@@ -1,23 +1,27 @@
 import dotenv from "dotenv";
-import { generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
+import { generateChatGPTPromptForTwitter, generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
 import { generateContentWithGPT } from "./generateContentWithGPT";
+import { TWITTER_RETRY_LIMIT } from "../../config";
 dotenv.config({
     path: ".env",
 });
 
-export const regenerateTwitterSummary = async (summary: string) => {
+export const generateTwitterSummary = async (summary: string) => {
     try {
-        if (summary.length > 250) {
-            let gptResponseTwitter: string = "";
-            for (let i = 0; i < Number(process.env.TWITTER_RETRY_LIMIT); i++) {
-                console.log("generating", i + 1);
-                const newPrompt = generateTwitterPromptForSummarizing(summary);
-                gptResponseTwitter = await generateContentWithGPT(newPrompt);
-                if (gptResponseTwitter.length < 250) break;
-            }
-            return gptResponseTwitter;
+        let gptResponseTwitter: string = "";
+        let limitCount = 0;
+        const promptForTwitter = generateChatGPTPromptForTwitter(summary);
+        gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
+
+        while (gptResponseTwitter.length > 250 && limitCount < Number(TWITTER_RETRY_LIMIT)) {
+            console.log("limitCount", limitCount);
+            limitCount += 1;
+
+            const newPrompt = generateTwitterPromptForSummarizing(gptResponseTwitter);
+            gptResponseTwitter = await generateContentWithGPT(newPrompt);
         }
-        return summary;
+
+        return gptResponseTwitter;
     } catch (error) {
         console.log("error", error);
     }

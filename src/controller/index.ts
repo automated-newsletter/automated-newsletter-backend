@@ -10,7 +10,7 @@ import { URL } from "url";
 import Twitter from "twitter-lite";
 import { socketServer } from "..";
 import { ResponseStatus, SupportedPlatforms, SocialMediaSupport } from "../socket/type";
-import { regenerateTwitterSummary } from "../utils/postOnSocialMedia";
+import { generateTwitterSummary } from "../utils/postOnSocialMedia";
 
 export interface NewsPost {
     news: string;
@@ -64,17 +64,17 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         let socialMediaUrls: SocialMediaSupport[] = [];
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
             // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
-            const promptForTwitter = generateChatGPTPromptForTwitter(gptResponse);
 
-            console.log("prompt for twitter", promptForTwitter);
+            // console.log("prompt for twitter", promptForTwitter);
 
-            // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
-            const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
+            // // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
 
-            const newTwitterSummary = await regenerateTwitterSummary(gptResponseTwitter);
+            // const newTwitterSummary = await regenerateTwitterSummary(gptResponseTwitter);
+
+            const tweet = await generateTwitterSummary(gptResponse);
 
             // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
-            console.log("\n\nTwitter\n\n", newTwitterSummary);
+            console.log("\n\nTwitter\n\n", tweet);
             const { oauth_token: accessToken, oauth_token_secret: accessSecret } = await twitterClient.getAccessToken({
                 oauth_verifier,
                 oauth_token,
@@ -88,7 +88,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 access_token_secret: accessSecret,
                 version: "1.1",
             });
-            const tweetText = newTwitterSummary;
+            const tweetText = tweet;
             const twitterUser = await userClient.post("statuses/update", { status: tweetText });
             console.log("twitterUser", twitterUser);
             socialMediaUrls.push({
