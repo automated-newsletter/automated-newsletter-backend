@@ -11,6 +11,7 @@ import Twitter from "twitter-lite";
 import { socketServer } from "..";
 import { ResponseStatus, SupportedPlatforms, SocialMediaSupport } from "../socket/type";
 import { generateTwitterSummary } from "../utils/postOnSocialMedia";
+import axios from "axios";
 
 export interface NewsPost {
     news: string;
@@ -146,5 +147,43 @@ export const authorizeTwitter = async (req: Request<{}, {}>, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred.");
+    }
+};
+
+const clientId = "86flhnbgc8e6nn";
+const clientSecret = "2ImCbdAed8aew6Rh";
+const redirectUri = "http://localhost:8000/callback-linkedin";
+
+export const authorizeLinkedin = async (req: Request<{}, {}>, res: Response) => {
+    try {
+        const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
+            redirectUri
+        )}&scope=r_liteprofile%20r_emailaddress%20w_member_social`;
+        res.redirect(authUrl);
+    } catch (error) {}
+};
+
+export const callbackLinkedin = async (req: Request<{}, {}>, res: Response) => {
+    const code = req.query.code;
+
+    try {
+        const response = await axios.post("https://www.linkedin.com/oauth/v2/accessToken", null, {
+            params: {
+                grant_type: "authorization_code",
+                code,
+                redirect_uri: redirectUri,
+                client_id: clientId,
+                client_secret: clientSecret,
+            },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        });
+
+        const accessToken = response.data.access_token;
+        res.send(`Access Token: ${accessToken}`);
+    } catch (error) {
+        res.status(500).send("Error obtaining access token");
+        console.error(error);
     }
 };
