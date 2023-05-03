@@ -10,6 +10,7 @@ import { URL } from "url";
 import Twitter from "twitter-lite";
 import { socketServer } from "..";
 import { ResponseStatus, SupportedPlatforms, SocialMediaSupport } from "../socket/type";
+import { regenerateTwitterSummary } from "../utils/postOnSocialMedia";
 
 export interface NewsPost {
     news: string;
@@ -70,8 +71,10 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
             // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
             const gptResponseTwitter = await generateContentWithGPT(promptForTwitter);
 
+            const newTwitterSummary = await regenerateTwitterSummary(gptResponseTwitter);
+
             // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
-            console.log("\n\nTwitter\n\n", gptResponseTwitter);
+            console.log("\n\nTwitter\n\n", newTwitterSummary);
             const { oauth_token: accessToken, oauth_token_secret: accessSecret } = await twitterClient.getAccessToken({
                 oauth_verifier,
                 oauth_token,
@@ -85,7 +88,7 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 access_token_secret: accessSecret,
                 version: "1.1",
             });
-            const tweetText = gptResponseTwitter;
+            const tweetText = newTwitterSummary;
             const twitterUser = await userClient.post("statuses/update", { status: tweetText });
             console.log("twitterUser", twitterUser);
             socialMediaUrls.push({
