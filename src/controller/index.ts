@@ -1,8 +1,20 @@
 import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
-import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../config/index";
+import {
+    TWITTER_APP_KEY,
+    TWITTER_APP_KEY_SECRET,
+    NEWS_API_KEY,
+    PORT,
+    LINKEDIN_CLIENT_ID,
+    LINKEDIN_CLIENT_SECRET_ID,
+    CLIENT_DOMAIN,
+} from "../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
-import { generateChatGPTPromptForNewsLetter, generateChatGPTPromptForTwitter } from "../utils/generateChatGPTPrompt";
+import {
+    generateChatGPTPromptForLinkedIn,
+    generateChatGPTPromptForNewsLetter,
+    generateChatGPTPromptForTwitter,
+} from "../utils/generateChatGPTPrompt";
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";
 import { generateImage, generateImagePrompt } from "../utils/generateImage";
 import { sendMail } from "../utils/sendMail";
@@ -19,6 +31,8 @@ export interface NewsPost {
     from: string;
     to: string;
     postToTwitter: boolean;
+    postToLinkedIn: boolean;
+    linkedInAuthCode?: string;
     socketId: string;
     oauth_token?: string;
     oauth_verifier?: string;
@@ -32,7 +46,18 @@ const twitterClient = new Twitter({
 
 export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Response) => {
     try {
-        const { news, emails, to, from, oauth_token, oauth_verifier, postToTwitter, socketId } = req.body;
+        const {
+            news,
+            emails,
+            to,
+            from,
+            oauth_token,
+            oauth_verifier,
+            postToTwitter,
+            socketId,
+            postToLinkedIn,
+            linkedInAuthCode,
+        } = req.body;
         res.status(200).json({
             status: ResponseStatus.PENDING,
             socketId,
@@ -64,14 +89,6 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
         await sendMail(emails, imageResponse, gptResponse, uniqueNews, newsStringModifier);
         let socialMediaUrls: SocialMediaSupport[] = [];
         if (postToTwitter && !!oauth_token && !!oauth_verifier) {
-            // const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
-
-            // console.log("prompt for twitter", promptForTwitter);
-
-            // // const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
-
-            // const newTwitterSummary = await regenerateTwitterSummary(gptResponseTwitter);
-
             const tweet = await generateTwitterSummary(gptResponse);
 
             // console.log("\n\nLinkedIn\n\n", gptResponseLinkedIn.choices[0].message.content);
@@ -96,6 +113,63 @@ export const newAutomatedLetter = async (req: Request<{}, {}, NewsPost>, res: Re
                 platform: SupportedPlatforms.TWITTER,
                 url: `https://twitter.com/${twitterUser.user.screen_name}/status/${twitterUser.id_str}`,
             });
+        }
+        if (postToLinkedIn && !!linkedInAuthCode) {
+            const promptForLinkedIn = generateChatGPTPromptForLinkedIn(gptResponse);
+            const gptResponseLinkedIn = await generateContentWithGPT(promptForLinkedIn);
+            const tokenResponse = await axios.post("https://www.linkedin.com/oauth/v2/accessToken", null, {
+                params: {
+                    grant_type: "authorization_code",
+                    code: linkedInAuthCode,
+                    redirect_uri: `${CLIENT_DOMAIN}/linkedin-auth`,
+                    client_id: LINKEDIN_CLIENT_ID,
+                    client_secret: LINKEDIN_CLIENT_SECRET_ID,
+                },
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            });
+
+            const access_token = tokenResponse.data.access_token;
+
+            const profileResponse = await axios.get("https://api.linkedin.com/v2/me", {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                    "Content-Type": "application/json",
+                    "X-Restli-Protocol-Version": "2.0.0",
+                },
+            });
+
+            const authorId = profileResponse.data.id;
+
+            const shareContent = {
+                author: `urn:li:person:${authorId}`,
+                lifecycleState: "PUBLISHED",
+                specificContent: {
+                    "com.linkedin.ugc.ShareContent": {
+                        shareCommentary: {
+                            text: gptResponseLinkedIn,
+                        },
+                        shareMediaCategory: "NONE",
+                    },
+                },
+                visibility: {
+                    "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+                },
+            };
+
+            const linkedInPostResponse = await axios.post("https://api.linkedin.com/v2/ugcPosts", shareContent, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                    "Content-Type": "application/json",
+                    "X-Restli-Protocol-Version": "2.0.0",
+                },
+            });
+
+            socialMediaUrls.push({
+                platform: SupportedPlatforms.LINKEDIN,
+                url: `https://www.linkedin.com/feed/update/${linkedInPostResponse.data.id}/`,
+            });
+
+            console.log("shareResponse", linkedInPostResponse.data.id);
         }
         socketServer.automatedNewsLetterResponse(socketId, {
             status: ResponseStatus.SUCCESS,
@@ -134,7 +208,7 @@ export const authorizeTwitter = async (req: Request<{}, {}>, res: Response) => {
     try {
         let oauthToken = "",
             oauthTokenSecret;
-        const twitterToken = await twitterClient.getRequestToken("http://192.168.0.205:3000/twitter-auth");
+        const twitterToken = await twitterClient.getRequestToken(`${CLIENT_DOMAIN}/twitter-auth`);
         if (twitterToken.oauth_callback_confirmed === "true") {
             oauthToken = twitterToken.oauth_token;
             oauthTokenSecret = twitterToken.oauth_token_secret;
@@ -150,40 +224,14 @@ export const authorizeTwitter = async (req: Request<{}, {}>, res: Response) => {
     }
 };
 
-const clientId = "86flhnbgc8e6nn";
-const clientSecret = "2ImCbdAed8aew6Rh";
-const redirectUri = "http://localhost:8000/callback-linkedin";
-
 export const authorizeLinkedin = async (req: Request<{}, {}>, res: Response) => {
     try {
-        const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
-            redirectUri
+        const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+            `${CLIENT_DOMAIN}/linkedin-auth`
         )}&scope=r_liteprofile%20r_emailaddress%20w_member_social`;
-        res.redirect(authUrl);
-    } catch (error) {}
-};
-
-export const callbackLinkedin = async (req: Request<{}, {}>, res: Response) => {
-    const code = req.query.code;
-
-    try {
-        const response = await axios.post("https://www.linkedin.com/oauth/v2/accessToken", null, {
-            params: {
-                grant_type: "authorization_code",
-                code,
-                redirect_uri: redirectUri,
-                client_id: clientId,
-                client_secret: clientSecret,
-            },
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        });
-
-        const accessToken = response.data.access_token;
-        res.send(`Access Token: ${accessToken}`);
+        res.status(200).json({ authURL: authUrl.toString() });
     } catch (error) {
-        res.status(500).send("Error obtaining access token");
         console.error(error);
+        res.status(500).send("An error occured linkedin authorize");
     }
 };
