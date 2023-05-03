@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getNews } from "../utils/getNews";
-import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../../config/index";
+import { TWITTER_APP_KEY, TWITTER_APP_KEY_SECRET, NEWS_API_KEY, PORT } from "../config/index";
 import { filterUniqueNews, pickFirstNNews } from "../utils/utils";
 import { generateChatGPTPromptForNewsLetter, generateChatGPTPromptForTwitter } from "../utils/generateChatGPTPrompt";
 import { generateContentWithGPT } from "../utils/generateContentWithGPT";

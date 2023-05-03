@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import http from "http";
-import { PORT } from "../config";
+import { PORT } from "./config";
 import { newAutomatedLetter, authorizeTwitter, callBackTwitter } from "./controller";
 import { SocketServer } from "./socket/socket";
 import { validateRequest } from "./middleware/validateRequest";

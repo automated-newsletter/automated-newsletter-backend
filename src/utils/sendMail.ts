@@ -1,6 +1,6 @@
 import sgMail, { MailDataRequired } from "@sendgrid/mail";
 import { createTemplateHtml } from "../utils/template";
-import { EMAIL_SENDER, SEND_GRID_API_KEY } from "../../config/index";
+import { EMAIL_SENDER, SEND_GRID_API_KEY } from "../config/index";
 
 sgMail.setApiKey(SEND_GRID_API_KEY);
 export const sendMail = async (

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { generateChatGPTPromptForTwitter, generateTwitterPromptForSummarizing } from "./generateChatGPTPrompt";
 import { generateContentWithGPT } from "./generateContentWithGPT";
-import { TWITTER_RETRY_LIMIT } from "../../config";
+import { TWITTER_RETRY_LIMIT } from "../config";
 dotenv.config({
     path: ".env",
 });

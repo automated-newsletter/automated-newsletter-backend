@@ -1,4 +1,4 @@
-import { chatGptInstance } from "./../../config/api";
+import { chatGptInstance } from "../config/api";
 
 export const generateImagePrompt = (summary: string) => {
     const basePrompt = `
